@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submission Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        p {
+            color: #333;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .retraining {
+            color: #ff9800;
+        }
+        .completed {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+    <script>
+        function checkRetrainStatus() {
+            fetch('/retrain-status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('retrain-status');
+                    if (data.status === 'in_progress') {
+                        statusElement.innerHTML = "The model is currently retraining...";
+                    } else if (data.status === 'completed') {
+                        statusElement.innerHTML = "The model retraining is completed.";
+                        statusElement.className = "completed";
+                    } else if (data.status === 'error') {
+                        statusElement.innerHTML = "There was an error during retraining.";
+                        statusElement.className = "error";
+                    }
+                })
+                .catch(error => console.error('Error fetching retrain status:', error));
+        }
+
+        setInterval(checkRetrainStatus, 5000); // Check every 5 seconds
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Submission Successful</h2>
+        <p>The URL <strong>{{ url }}</strong> has been successfully added to the database.</p>
+        {% if retraining %}
+            <p id="retrain-status" class="retraining">The model is currently retraining...</p>
+        {% endif %}
+        <a href="/add-url">Add another URL</a>
+    </div>
+</body>
+</html>
